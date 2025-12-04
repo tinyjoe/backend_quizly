@@ -19,11 +19,14 @@ class RegistrationView(APIView):
         
 
 class LoginTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        refresh = response.get('refresh')
-        access = response.get('access')
-        response = Response({'detail': 'Login successfully', 'user': {'id': request.user.id, 'username': request.user.username, 'email': request.user.email}}, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        refresh = serializer.validated_data.get('refresh')
+        access = serializer.validated_data.get('access')
+        user = serializer.user
+        response = Response({'detail': 'Login successfully', 'user': {'id': user.id, 'username': user.username, 'email': user.email}}, status=status.HTTP_200_OK)
         response.set_cookie(key='access_token', value=access, httponly=True, secure=True, samesite="Lax")
         response.set_cookie(key='refresh_token', value=refresh, httponly=True, secure=True, samesite="Lax")
         return response
@@ -50,7 +53,7 @@ class CustomTokenRefreshView(TokenRefreshView):
             serializer.is_valid(raise_exception=True)
         except:
             return Response({'detail': 'Refresh token invalid'}, status=status.HTTP_401_UNAUTHORIZED)
-        access_token = serializer.validated_data.get('access_token')
+        access_token = serializer.validated_data.get('access')
         response = Response({'detail': 'Token refreshed', 'access': access_token}, status=status.HTTP_200_OK)
         response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite="Lax")
         return response
