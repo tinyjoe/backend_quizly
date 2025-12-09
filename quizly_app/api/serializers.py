@@ -13,6 +13,7 @@ class QuizSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quiz
         fields = ['id', 'title', 'description', 'created_at', 'updated_at', 'video_url', 'questions']
+        write_only_fields = ['owner']
 
 
 class QuizCreateSerializer(serializers.Serializer):
