@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, generics
+from rest_framework.permissions import IsAuthenticated
 
 from quizly_app.models import Quiz
 from .serializers import QuizSerializer, QuizCreateSerializer
@@ -9,7 +10,7 @@ from .permissions import IsOwnerAndAuthenticated
 
 
 class CreateQuizFromYoutubeView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = QuizCreateSerializer(data=request.data)
         if not serializer.is_valid():
@@ -22,11 +23,11 @@ class CreateQuizFromYoutubeView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 class QuizListView(generics.ListAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
     permission_classes = [permissions.IsAuthenticated]
+
 
 class QuizDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Quiz.objects.all()
