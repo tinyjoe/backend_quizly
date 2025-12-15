@@ -1,7 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Quiz(models.Model):
+    """
+    This class represents a Quiz model with fields for owner, title, description, video URL, creation timestamp, and update timestamp.
+    """
     owner = models.ForeignKey(User, related_name='quizzes', on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
@@ -14,6 +18,9 @@ class Quiz(models.Model):
 
 
 class Question(models.Model):
+    """
+    This class defines a model for storing quiz questions with titles, options, answers, and timestamps.
+    """
     quiz = models.ForeignKey(Quiz, related_name="questions", on_delete=models.CASCADE, null=True, blank=True)
     question_title = models.CharField(max_length=500)
     question_options = models.JSONField()

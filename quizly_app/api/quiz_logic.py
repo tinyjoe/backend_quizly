@@ -1,10 +1,13 @@
 import tempfile
 import json
 import yt_dlp
+import os
 from google import genai
 from google.genai import types
 
 from django.conf import settings
+from rest_framework import status
+from rest_framework.response import Response
 
 from quizly_app.models import Quiz, Question
 
@@ -13,30 +16,39 @@ def download_audio_from_youtube(youtube_url):
     """
     Downloads audio from YouTube and returns the path to the temp file.
     """
-    temp = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
-    temp_path = temp.name
-    ydl_opts = {
-        'format': 'bestaudio[ext=mp3]/bestaudio/best',
-        'outtmpl': temp_path,
-        'quiet': True,
-        'no_warnings': True,
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([youtube_url])
-    return temp_path
+    try: 
+        temp_dir = tempfile.mkdtemp()
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': f'{temp_dir}/audio.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+            'quiet': True,
+            'no_warnings': True,
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([youtube_url])
+        return os.path.join(temp_dir, 'audio.mp3')
+    except:
+        return Response('Invalid YouTube URL or download error.', status=status.HTTP_400_BAD_REQUEST)
 
 
 def transcribe_audio(file_path):
     """
-    Transcribes an audio file using Whisper and returns the transcription text.
+    Transcribes an audio file using Gemini and returns the transcription text.
     """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f'Audio file not found: {file_path}', status=status.HTTP_400_BAD_REQUEST)
     client = genai.Client(api_key=settings.GEMINI_API_KEY)
     with open(file_path, 'rb') as audio_file:
         audio_data = audio_file.read()
-    response = client.models.generate_content(model='gemini-2.5-flash', contents= ['Transcribiere die folgende Audiodatei ins Deutsche: ', types.Part.from_bytes(data=audio_data, mime_type='audio/mp3')])
+    response = client.models.generate_content(model='gemini-2.5-flash', contents= ['Transkribiere die folgende Audiodatei ins Deutsche: ', types.Part.from_bytes(data=audio_data, mime_type='audio/mp3')])
     text = response.text
     if not text:
-        raise ValueError("Transcription failed or returned empty text.")
+        raise ValueError('Transcription failed or returned empty text.')
     return text
 
 

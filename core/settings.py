@@ -16,7 +16,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GEMINI_API_KEY = 'AIzaSyBlkAZT9guEyP-SjVVtUcFCEkcCEhZ_fnU'
+GEMINI_API_KEY = 'AIzaSyD_BpbKSx_5w6ZroZyQEPLZPzMF6w63toc'
 
 
 # Quick-start development settings - unsuitable for production
@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'auth_app',
     'quizly_app',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,6 +106,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+]
+
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:5500"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
