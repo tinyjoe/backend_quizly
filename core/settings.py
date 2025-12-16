@@ -16,7 +16,7 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GEMINI_API_KEY = 'AIzaSyD_BpbKSx_5w6ZroZyQEPLZPzMF6w63toc'
+GEMINI_API_KEY = 'AIzaSyA4KyZqRWO9b1M2sJl6LO60He0uDzV3w0I'
 
 
 # Quick-start development settings - unsuitable for production
@@ -139,7 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'quizly_app.api.authentication.CookieJWTAuthentication',
     )
 }
 

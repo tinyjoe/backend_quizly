@@ -26,8 +26,8 @@ class CreateQuizFromYoutubeView(APIView):
         try:
             quiz = create_quiz_pipeline(user=request.user, youtube_url=youtube_url)
             return Response(QuizSerializer(quiz).data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return Response({'error': 'Invalid YouTube URL or download error.'}, status=status.HTTP_400_BAD_REQUEST)
+        except RuntimeError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class QuizListView(generics.ListAPIView):

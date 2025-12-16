@@ -16,24 +16,24 @@ def download_audio_from_youtube(youtube_url):
     """
     Downloads audio from YouTube and returns the path to the temp file.
     """
-    try: 
-        temp_dir = tempfile.mkdtemp()
-        ydl_opts = {
-            'format': 'bestaudio/best',
-            'outtmpl': f'{temp_dir}/audio.%(ext)s',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-            'quiet': True,
-            'no_warnings': True,
-        }
+    temp_dir = tempfile.mkdtemp()
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': os.path.join(temp_dir, 'audio.%(ext)s'),
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'quiet': False,
+        'no_warnings': False,
+    }
+    try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([youtube_url])
-        return os.path.join(temp_dir, 'audio.mp3')
-    except:
-        return Response('Invalid YouTube URL or download error.', status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        raise RuntimeError(f"YouTube download failed: {e}")
+    return os.path.join(temp_dir, 'audio.mp3')
 
 
 def transcribe_audio(file_path):
