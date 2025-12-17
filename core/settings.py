@@ -20,18 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
 
-def get_env_var(name):
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"Missing environment variable: {name}")
-    return value
+SECRET_KEY = os.getenv('SECRET_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-SECRET_KEY = get_env_var('SECRET_KEY')
-GEMINI_API_KEY = get_env_var('GEMINI_API_KEY')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 
-CORS_ALLOWED_ORIGINS = get_env_var('CORS_ALLOWED_ORIGINS', '').split(',')
-
-CSRF_TRUSTED_ORIGINS = get_env_var('CSRF_TRUSTED_ORIGINS', '').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 
 # Quick-start development settings - unsuitable for production
