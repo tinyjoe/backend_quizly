@@ -11,19 +11,34 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GEMINI_API_KEY = 'AIzaSyA4KyZqRWO9b1M2sJl6LO60He0uDzV3w0I'
+load_dotenv(BASE_DIR / '.env')
+
+def get_env_var(name):
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(f"Missing environment variable: {name}")
+    return value
+
+SECRET_KEY = get_env_var('SECRET_KEY')
+GEMINI_API_KEY = get_env_var('GEMINI_API_KEY')
+
+CORS_ALLOWED_ORIGINS = get_env_var('CORS_ALLOWED_ORIGINS', '').split(',')
+
+CSRF_TRUSTED_ORIGINS = get_env_var('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=%4^1pp5nss(jva16$@n5w)mflx9h$n2lq7))7@&kfdalo8!xw'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -108,12 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-]
-
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:5500"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
