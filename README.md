@@ -63,6 +63,20 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
+## Setup
+
+Create `.env` file: 
+```sh
+cp .env.template .env
+```
+
+Fill in required environment variables
+
+Run migrations:
+```sh
+python manage.py migrate
+```
+
 ## Database Migrations
 
 Run the initial migrations
@@ -81,9 +95,4 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## Set the Gemini API Key
-exchange the Gemini API Key in settings.py 
-```sh
-GEMINI_API_KEY = <your-api-key>
-```
 
